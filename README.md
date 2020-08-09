@@ -1,0 +1,1 @@
+This plugins library is for LAT template used in AppGini
