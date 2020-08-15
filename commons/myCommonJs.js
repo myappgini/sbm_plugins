@@ -26,24 +26,21 @@ function show_warning(field, campo, msg) {
     return false;
 }
 
-function addWarningBtn(field, title = "Click to fix value", icon = "glyphicon glyphicon-ok") { //lagcy function
-    var oldhtml = '';
-    var newhtml = '';
-    oldhtml = $j('#' + field).closest('div').html();
-    newhtml = '<div class="input-group">' + oldhtml +
-        '<span class="input-group-btn">' +
-        '<button class="btn btn-default btn-fix" myfield="' + field + '" type="button" title="' + title + '"><span class="' + icon + '"></span></button>' +
-        '</span>' +
-        '</div>';
-    $j('#' + field).closest('div').html(newhtml);
+function addWarningBtn(field, title = "click me...", icon = "glyphicon glyphicon-ok") {
+    //lagcy function
+    prepend_btn(field, title, icon);
 }
 
-function prepend_btn(field, title, icon = "glyphicon glyphicon-ok") {
+function prepend_btn(field, title = "click me...", icon = "glyphicon glyphicon-ok") {
 
     $obj = $j('#' + field).closest('div');
 
-    var $container = $j('<span/>', {
-        class: 'input-group-btn'
+    var $container = $j('<div/>', {
+        class: "input-group"
+    });
+
+    var $append = $j('<span/>', {
+        class: 'input-group-append'
     });
 
     var $btn = $j('<button/>', {
@@ -58,17 +55,16 @@ function prepend_btn(field, title, icon = "glyphicon glyphicon-ok") {
     });
 
     $btn.append($btn_image);
-    $container.append($btn);
-
-    $imput_grp = $j('<div class="input-group alert"/>');
-    $imput_grp.append($obj).append($container);
-    $obj.html($imput_grp.html());
+    $append.append($btn);
+    $container.append($obj.html()).append($append);
+    $obj.html($container);
 
 }
 
 function ToggleFix(field, a = 'default') {
 
-    $field = $j('#' + field).next().children('.btn-fix');
+    //$field = $j('#' + field).next().children('.btn-fix');
+    $field = $j('.btn-fix [datafield="' + field + '"]')
 
     if (!$field.hasClass('btn-' + a)) {
 
