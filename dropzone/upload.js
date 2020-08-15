@@ -1,4 +1,3 @@
-
 /* global $j */
 
 function initTable() {
@@ -20,7 +19,7 @@ function add_to_list(id, tableName) {
         dataType: "text",
         url: 'hooks/savedList.php',
         data: { id: id, cmd: 'addToList', tableName: tableName, image: image },
-        success: function (response) {
+        success: function(response) {
             if (response !== '1') {
                 deleteItem(id, tableName);
             }
@@ -31,13 +30,12 @@ function add_to_list(id, tableName) {
 
 function deleteItem(id, tableName) {
     $j.ajax({
-        method: "POST",
-        dataType: "text",
-        url: 'hooks/savedList.php',
-        data: { cmd: 'deleteItem', id: id, tableName: tableName }
-    })
-        .done(function (msg) {
-        });
+            method: "POST",
+            dataType: "text",
+            url: 'hooks/savedList.php',
+            data: { cmd: 'deleteItem', id: id, tableName: tableName }
+        })
+        .done(function(msg) {});
 }
 
 function recountsItems(tableName) {
@@ -46,7 +44,7 @@ function recountsItems(tableName) {
         dataType: "text",
         url: 'hooks/savedList.php',
         data: { id: '1', cmd: 'recountItems' },
-        success: function (response) {
+        success: function(response) {
             //                    alert('saved items: '+ response);
             $j('.itemSalvos').text(response);
             checkButtons(tableName);
@@ -56,7 +54,7 @@ function recountsItems(tableName) {
 }
 
 function checkButtons(tableName) {
-    $j('.addToList').each(function (index) {
+    $j('.addToList').each(function(index) {
         //buscar los botones y verificar si el mismo esta guardado...
         var a = this.attributes;
         checkIsSaved(a.myid.value, tableName);
@@ -67,12 +65,12 @@ function checkButtons(tableName) {
 
 function checkIsSaved(id, tableName) {
     $j.ajax({
-        method: "POST",
-        dataType: "text",
-        url: 'hooks/savedList.php',
-        data: { cmd: 'isSelected', id: id, tableName: tableName }
-    })
-        .done(function (msg) {
+            method: "POST",
+            dataType: "text",
+            url: 'hooks/savedList.php',
+            data: { cmd: 'isSelected', id: id, tableName: tableName }
+        })
+        .done(function(msg) {
             //cambiar el estado del selected...<span class="glyphicon glyphicon-record"></span
             var tag = '';
 
@@ -110,12 +108,12 @@ function checkIsSaved(id, tableName) {
 
 async function showTumbs() {
 
-    $j('.' + thisTable() + '-image').each(function (index) {
+    $j('.' + thisTable() + '-image').each(function(index) {
         var object = $j(this);
         var b = 'full';
         var x = this.id; //id
         x = x.split('-');
-        x = x[2];//id
+        x = x[2]; //id
         var title = $j('#' + thisTable() + '-customer-' + x).text();
         var imgTumb = $j('<div />', { id: '#imagesThumbs-' + x, class: 'thumbs', title: x });
 
@@ -124,7 +122,7 @@ async function showTumbs() {
             url: "hooks/previewImages.php",
             data: { cmd: 'get_json', tn: 'Order', fn: 'uploads', where: 'id=' + x, json: ["1"] },
             dataType: "json",
-            success: function (a) {
+            success: function(a) {
                 if (!isJson(a) || !a) {
                     a = { images: [] };
                     b = 'empty';
@@ -137,9 +135,9 @@ async function showTumbs() {
                     url: 'hooks/previewImages.php',
                     cache: 'false',
                     data: { json: a, cmd: b, indice: x, title: title, tableName: thisTable() },
-                    success: function (response) {
+                    success: function(response) {
                         imgTumb.html(response);
-                        setTimeout(function () {
+                        setTimeout(function() {
                             object.append(imgTumb);
                             showSlides((getDefualtImage(a)), x);
                         }, 500);
@@ -151,15 +149,15 @@ async function showTumbs() {
 }
 
 function get_uploades_json(data = {}) {
-    const promise = new Promise(function (resolve, reject) {
+    const promise = new Promise(function(resolve, reject) {
         if (data) {
             $j.ajax({
-                type: "POST",
-                url: "hooks/previewImages.php",
-                data: data,
-                dataType: "json"
-            })
-                .done(function (a) {
+                    type: "POST",
+                    url: "hooks/previewImages.php",
+                    data: data,
+                    dataType: "json"
+                })
+                .done(function(a) {
                     resolve(a);
                 });
 
@@ -182,11 +180,11 @@ function getDefualtImage(j) {
     return ret;
 }
 
-async function loadImages(t,indice) {
+async function loadImages(t, indice) {
     var b = 'full';
     var j = await getUploadedFile(indice);
-    data = { cmd: b, tn: thisTable(),  json: j, title: t }
-    $j('#imagesThumbs').load('hooks/previewImages.php', data, function () {
+    data = { cmd: b, tn: thisTable(), json: j, title: t }
+    $j('#imagesThumbs').load('hooks/previewImages.php', data, function() {
         if (!is_add_new()) {
             showSlides(getDefualtImage(j));
             if (content_type() === 'print-detailview') {
@@ -210,21 +208,20 @@ function showPdf(file, n, i, tv) {
         message: msg,
         title: n,
         size: 'full',
-        footer: [
-            {
+        footer: [{
                 label: '<i class="glyphicon glyphicon-cloud-download"></i> Download',
                 bs_class: 'default',
-                click: function (e) {
-                    var windowName = "popUp";//$(this).attr("name");
+                click: function(e) {
+                    var windowName = "popUp"; //$(this).attr("name");
                     window.open(file, windowName);
-                    e.preventDefault();  //stop the browser from following
+                    e.preventDefault(); //stop the browser from following
                 },
                 causes_closing: true
             },
             {
                 label: '<i class="glyphicon glyphicon-remove"></i> Fechar',
                 bs_class: 'primary',
-                click: function () {
+                click: function() {
                     if (content_type() === 'tableview') {
                         showTumbs();
                     } else {
@@ -250,7 +247,7 @@ async function setPdfThumb(i, tv) {
             url: 'hooks/_resampledIMG.php',
             cache: 'false',
             data: { cmd: 'newPDF', $source: a.name, $fileName: a.fileName, $ext: a.extension, $folder: a.folder_base, $page: new_page },
-            success: function (response) {
+            success: function(response) {
                 //                       alert(response);
             }
         });
@@ -259,8 +256,8 @@ async function setPdfThumb(i, tv) {
 
 function showSlides(n, x) {
     if (x === undefined || x === null) { x = ''; }
-    var slides = $j(".mySlides-" + x);
-    var dots = $j(".demo");
+    var slides = $j(".lbid-" + x);
+    var dots = $j(".img-lite");
 
     if (slides.length === 0) return;
     if (n > slides.length) { n = 1; }
@@ -319,25 +316,23 @@ async function openOtherFiles(id) {
     var a = await getUploadedFile(id);
     var largo = $j('#' + AppGini.currentTableName + '-codigoCompleto-' + id).text();
     $j.ajax({
-        method: "POST",
-        dataType: "text",
-        url: 'hooks/previewImages.php',
-        data: { json: a, cmd: 'buttons', indice: id, largo: largo.length, tableName: AppGini.currentTableName }
-    })
-        .done(function (msg) {
+            method: "POST",
+            dataType: "text",
+            url: 'hooks/previewImages.php',
+            data: { json: a, cmd: 'buttons', indice: id, largo: largo.length, tableName: AppGini.currentTableName }
+        })
+        .done(function(msg) {
             modal_window({
                 message: msg,
                 title: 'Arquivos',
-                footer: [
-                    {
-                        label: '<i class="glyphicon glyphicon-remove"></i> Fechar',
-                        bs_class: 'primary',
-                        click: function () {
-                            return true;
-                        },
-                        causes_closing: true //el valor indica que cuando hace click se cierra la ventana.
-                    }
-                ]
+                footer: [{
+                    label: '<i class="glyphicon glyphicon-remove"></i> Fechar',
+                    bs_class: 'primary',
+                    click: function() {
+                        return true;
+                    },
+                    causes_closing: true //el valor indica que cuando hace click se cierra la ventana.
+                }]
             });
         });
 
@@ -363,13 +358,13 @@ function updatefilter() {
             url: './ajax_combo.php',
             dataType: 'json',
             cache: true,
-            data: function (term, page) { return { s: term, p: page, t: AppGini.currentTableName, f: field }; },
-            results: function (resp, page) {
+            data: function(term, page) { return { s: term, p: page, t: AppGini.currentTableName, f: field }; },
+            results: function(resp, page) {
                 return resp;
             }
         },
         width: 250
-    }).on('change', function (e) {
+    }).on('change', function(e) {
         $j("#filterfield_2").val(e.added.text);
         $j("[name^=FilterValue]").val(e.added.text);
         $j("#lookupoperator_2").val('equal-to');
@@ -397,12 +392,12 @@ function updatefilter() {
             url: 'ajax_combo.php',
             dataType: 'json',
             data: {
-                s: $j("#filterfield_2").val(),  //search term
-                p: 1,                                         //page number
-                t: AppGini.currentTableName,                //table name
-                f: field               //field name
+                s: $j("#filterfield_2").val(), //search term
+                p: 1, //page number
+                t: AppGini.currentTableName, //table name
+                f: field //field name
             }
-        }).done(function (response) {
+        }).done(function(response) {
             if (response.results.length) {
                 $j("#filter_2").select2('data', {
                     id: response.results[1].id,
@@ -415,7 +410,7 @@ function updatefilter() {
 
 function beforeApplyFilters(event) {
     //get all field submitted values
-    $j(":input[type=text][name^=FilterValue],:input[type=hidden][name^=FilterValue],:input[type=radio][name^=FilterValue]:checked").each(function (index) {
+    $j(":input[type=text][name^=FilterValue],:input[type=hidden][name^=FilterValue],:input[type=radio][name^=FilterValue]:checked").each(function(index) {
 
         //if type=hidden  and options radio fields with the same name are checked, supply its value
         if ($j(this).attr('type') == 'hidden' && $j(":input[type=radio][name='" + $j(this).attr('name') + "']:checked").length > 0) {
@@ -435,7 +430,7 @@ function beforeCancelFilters() {
     //other fields
     $j('form')[0].reset();
     //lookup case ( populate with initial data)
-    $j(":input[class='populatedLookupData']").each(function () {
+    $j(":input[class='populatedLookupData']").each(function() {
         $j(":input[name='FilterValue[" + $j(this).attr('name') + "]']").val($j(this).val());
         if ($j(this).val() == '<None>') {
             $j(this).parent(".row ").find('input[id^="lookupoperator"]').val('is-empty');
@@ -444,7 +439,7 @@ function beforeCancelFilters() {
         }
     });
     //options case ( populate with initial data)
-    $j(":input[class='populatedOptionsData']").each(function () {
+    $j(":input[class='populatedOptionsData']").each(function() {
 
         $j(":input[name='FilterValue[" + $j(this).attr('name') + "]']").val($j(this).val());
     });
@@ -480,21 +475,21 @@ function returnJsonstr(a) {
 async function jsonImages(data) {
     var indice = $j('input[name=SelectedID]').val();
     var a = await getUploadedFile(indice);
-data.forEach(element => {
-    a.images.push(element); //adding new image to json
-});
+    data.forEach(element => {
+        a.images.push(element); //adding new image to json
+    });
 
-    
+
     a = returnJsonstr(a);
     $j.ajax({
         type: "POST",
         url: "hooks/previewImages.php",
         data: { cmd: 'put_json', tn: thisTable(), set: "uploads='" + a + "'", where: 'id=' + indice, json: ["1", "2"] },
         dataType: "json",
-        success: function (response) {
+        success: function(response) {
             //console.log(response);
             $j('#imagesThumbs').html('');
-            loadImages('New files',indice);
+            loadImages('New files', indice);
         }
     });
 
@@ -509,12 +504,12 @@ async function openGalery(btn) {
     }
     var a = await getUploadedFile(indice);
     $j.ajax({
-        method: "POST",
-        dataType: "text",
-        url: 'hooks/previewImages.php',
-        data: { json: a, cmd: 'form', tableName: thisTable(), indice: indice }
-    })
-        .done(function (msg) {
+            method: "POST",
+            dataType: "text",
+            url: 'hooks/previewImages.php',
+            data: { json: a, cmd: 'form', tableName: thisTable(), indice: indice }
+        })
+        .done(function(msg) {
             $j('body').append(msg);
             $j('#images-modal').modal('show')
 
@@ -532,7 +527,7 @@ function save_button(data, id) {
         url: "hooks/previewImages.php",
         data: { cmd: 'put_json', tn: thisTable(), set: "uploads='" + jsn + "'", where: 'id=' + id, json: ["1", "2"] },
         dataType: "json",
-        success: function (response) {
+        success: function(response) {
             console.log(response);
         }
     });
@@ -541,51 +536,49 @@ function save_button(data, id) {
         url: 'hooks/deleteFile.php',
         data: { 'file': del },
         dataType: 'json',
-        success: function (response) {
-            if (response.status === true) {
-            }
+        success: function(response) {
+            if (response.status === true) {}
         }
     });
     $j('#imagesThumbs').html('');
-    loadImages($j('#titulo').val(),id);
+    loadImages($j('#titulo').val(), id);
     return;
 }
 
 function openMailForm() {
     $j.ajax({
-        method: "POST",
-        dataType: "HTML",
-        url: 'hooks/mailForm.php',
-        data: { cmd: 'form' }
-    })
-        .done(function (msg) {
+            method: "POST",
+            dataType: "HTML",
+            url: 'hooks/mailForm.php',
+            data: { cmd: 'form' }
+        })
+        .done(function(msg) {
             modal_window({
                 message: msg,
                 title: 'Arquivos Digitais',
-                footer: [
-                    {
-                        label: '<i class="glyphicon glyphicon-send"></i> Send',
-                        bs_class: 'primary',
-                        click: function () {
-                            //                           console.log( $j( '#contact' ).serialize() );
-                            var mail = $j('#contact').serialize();
-                            $j.ajax({
+                footer: [{
+                    label: '<i class="glyphicon glyphicon-send"></i> Send',
+                    bs_class: 'primary',
+                    click: function() {
+                        //                           console.log( $j( '#contact' ).serialize() );
+                        var mail = $j('#contact').serialize();
+                        $j.ajax({
                                 method: "POST",
                                 dataType: "text",
                                 url: 'hooks/sendMail.php',
                                 data: { mail: mail }
                             })
-                                .done(function (ret) {
-                                    if (ret === '1') {
-                                        alert('the e-mail has send!');
-                                    } else {
-                                        alert('Sending e-mail Error: ' + ret);
-                                    }
-                                });
-                            return true;
-                        },
-                        causes_closing: true //el valor indica que cuando hace click se cierra la ventana.
-                    }]
+                            .done(function(ret) {
+                                if (ret === '1') {
+                                    alert('the e-mail has send!');
+                                } else {
+                                    alert('Sending e-mail Error: ' + ret);
+                                }
+                            });
+                        return true;
+                    },
+                    causes_closing: true //el valor indica que cuando hace click se cierra la ventana.
+                }]
             });
         });
 }
@@ -594,12 +587,12 @@ function requestDownload(btn, indice) {
     //    alert(indice + " " + btn.attributes['filename'].value);
     var fn = btn.attributes.filename.value;
     $j.ajax({
-        method: "POST",
-        dataType: "json",
-        url: 'hooks/requestDownload_AJX.php',
-        data: { cmd: 'dr', id: indice, fileName: fn }
-    })
-        .done(function (ret) {
+            method: "POST",
+            dataType: "json",
+            url: 'hooks/requestDownload_AJX.php',
+            data: { cmd: 'dr', id: indice, fileName: fn }
+        })
+        .done(function(ret) {
             if (ret) {
                 //hace falta envier un mail??
                 alert('Your request has send... If aproved then you are alowed to download the file. Admin.');
@@ -612,17 +605,17 @@ function requestDownload(btn, indice) {
 
 //check if the record are archived and change background
 function isArchived() {
-    $j('.is-archived').each(function () {
+    $j('.is-archived').each(function() {
         var id = this.attributes.myid.value;
         if (id > 0) {
             $j.ajax({
-                method: 'post', //post, get
-                dataType: 'json', //json,text,html
-                url: 'hooks/isArchived_AJX.php',
-                cache: 'false',
-                data: { cmd: 'check', id: id, tn: AppGini.currentTableName + '-ARCHIVED' }
-            })
-                .done(function (msg) {
+                    method: 'post', //post, get
+                    dataType: 'json', //json,text,html
+                    url: 'hooks/isArchived_AJX.php',
+                    cache: 'false',
+                    data: { cmd: 'check', id: id, tn: AppGini.currentTableName + '-ARCHIVED' }
+                })
+                .done(function(msg) {
                     //function at response
                     if (msg > 0) {
                         $j("td[myid='" + msg + "']").removeClass('is-arvhived').addClass('archived');
@@ -635,13 +628,13 @@ function isArchived() {
 //archive item
 function archiveItem(tableName, id) {
     $j.ajax({
-        method: 'post', //post, get
-        dataType: 'json', //json,text,html
-        url: 'hooks/isArchived_AJX.php',
-        cache: 'false',
-        data: { cmd: 'archive', tn: tableName, id: id }
-    })
-        .done(function (msg) {
+            method: 'post', //post, get
+            dataType: 'json', //json,text,html
+            url: 'hooks/isArchived_AJX.php',
+            cache: 'false',
+            data: { cmd: 'archive', tn: tableName, id: id }
+        })
+        .done(function(msg) {
             //function at response
             //                    alert('Item has been archived!');
             var a = 1;
@@ -657,13 +650,13 @@ function content_type() {
 
 function trashForm() {
     $j.ajax({
-        method: 'post', //post, get
-        dataType: 'html', //json,text,html
-        url: 'hooks/isArchived_AJX.php',
-        cache: 'false',
-        data: { cmd: 'trashForm', tn: 'tn', id: 'id' }
-    })
-        .done(function (msg) {
+            method: 'post', //post, get
+            dataType: 'html', //json,text,html
+            url: 'hooks/isArchived_AJX.php',
+            cache: 'false',
+            data: { cmd: 'trashForm', tn: 'tn', id: 'id' }
+        })
+        .done(function(msg) {
             //function at response
             modal_window({
                 message: msg,
@@ -693,7 +686,7 @@ function myCancel(btn) {
 }
 
 function enableButtons() {
-    setTimeout(function () {
+    setTimeout(function() {
         $j('#insert, #update, #delete, #deselect').prop('disabled', false);
     }, 300); // delay purpose is to allow submitting the button values first then disable them.
 }
