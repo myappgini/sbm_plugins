@@ -26,45 +26,46 @@ function show_warning(field, campo, msg) {
     return false;
 }
 
-function addWarningBtn(field, title = "click me...", icon = "glyphicon glyphicon-ok") {
-    //lagcy function
-    prepend_btn(field, title, icon);
+function addWarningBtn(field, title = "click me...", icon = "glyphicon glyphicon-ok") { //lagcy function
+
+    prepend_btn(field, title, text, icon);
 }
 
-function prepend_btn(field, title = "click me...", icon = "glyphicon glyphicon-ok") {
+function prepend_btn(field = false, title = "click me...", text = "", icon_class = "glyphicon glyphicon-ok") {
+    if (field) {
 
-    $obj = $j('#' + field).closest('div');
+        $obj = $j('#' + field).closest('div');
 
-    var $container = $j('<div/>', {
-        class: "input-group"
-    });
+        var $container = $j('<div/>', {
+            class: "input-group"
+        });
 
-    var $append = $j('<span/>', {
-        class: 'input-group-append'
-    });
+        var $append = $j('<span/>', {
+            class: 'input-group-append'
+        });
 
-    var $btn = $j('<button/>', {
-        class: 'btn btn-default btn-fix',
-        "data-field": field,
-        type: "button",
-        title: title
-    });
+        var $btn = $j('<button/>', {
+            class: 'btn btn-default btn-fix',
+            "data-field": field,
+            type: "button",
+            title: title,
+            text: text
+        });
 
-    var $btn_image = $j('<span/>', {
-        class: icon
-    });
+        var $btn_image = $j('<span/>', {
+            class: icon_class
+        });
 
-    $btn.append($btn_image);
-    $append.append($btn);
-    $container.append($obj.html()).append($append);
-    $obj.html($container);
-
+        $btn.append($btn_image);
+        $append.append($btn);
+        $container.append($obj.html()).append($append);
+        $obj.html($container);
+    }
 }
 
 function ToggleFix(field, a = 'default') {
 
-    //$field = $j('#' + field).next().children('.btn-fix');
-    $field = $j('.btn-fix [datafield="' + field + '"]')
+    $field = $j('.btn-fix [data-field="' + field + '"]')
 
     if (!$field.hasClass('btn-' + a)) {
 
@@ -85,8 +86,41 @@ function ToggleFix(field, a = 'default') {
     }
 }
 
-function is_add_new() {
-    var add_new_mode = (!$j('input[name=SelectedID]').val());
+function inline_fields(fields = [], label, with_cols) {
+    if (fields.length > 1) {
+
+        var $pos = $j('#' + fields[0]).closest('.form-group').addClass('row');
+        var $container = $j('<div/>', {
+            class: "form-group row"
+        })
+        var $label = $j('<label/>', {
+            class: "col-2 col-form-label",
+            for: "",
+            text: label
+        })
+        $container.append($label);
+        var $input = "";
+        fields.forEach(f => {
+            $cols = $j('<div/>', {
+                class: "col"
+            })
+            $input = $j('#' + f).closest('div');
+            $input.closest('label').remove();
+            $cols.append($input.html())
+            $container.append($cols);
+        });
+        $pos.html($container.html())
+    } else {
+        console.warn('You need an array of more than one element');
+    }
+}
+
+function selected_id() { //return ID from selected record
+    return $j('input[name=SelectedID]').val();
+}
+
+function is_add_new() { //return true if the user are in add new form 
+    var add_new_mode = (!selected_id());
     return add_new_mode;
 }
 
@@ -150,7 +184,6 @@ function showCardsTV(field, dest, url) {
     }
 }
 
-
 function showItem(id, dest, url) {
     //field = field to get the ID from
     //dest = ID where to put the html result
@@ -188,8 +221,7 @@ function showParent(Data) {
     });
 }
 
-//remove empty values from table
-function removeEmpty() {
+function removeEmpty() { //remove empty values from TV
     $j('dt').filter(function() {
         var t = ($j(this).next().is('dd'));
         if (t) {
@@ -223,4 +255,51 @@ function isJson(str) {
         return false;
     }
     return true;
+}
+
+
+function normalizeView() {
+    $j('#top_buttons').prepend($j('#addNew'));
+    var $header = $j('.page-header > h1');
+
+    $j($header).replaceWith(function() {
+        return $j("<h4 />").append($j(this).contents());
+    });
+
+    var $div = $j('<div />', {
+        class: "card-header"
+    });
+
+    $div.append($j('.page-header > h4'));
+    $div.append($j('#top_buttons'));
+    $j('.table_view').addClass('card card-default').prepend($div);
+    $j('.table').addClass('table-sm').removeClass('table-striped table-bordered ');
+    // hide selector in table
+    $j('.record_selector').parent('td').hide();
+    $j('#select_all_records').parent('th').hide();
+
+    $j('.pagination-section').addClass('justify-content-center');
+
+    removeText('#top_buttons .btn-group .btn');
+    removeText('.pagination-section .btn');
+    removeText('.btn');
+    removeText('#addNew');
+
+    $j('div').removeClass('tv-tools ');
+    $j('.selected_records').remove();
+
+    $j('hr').remove();
+}
+
+function removeText(selector) { //from buttons
+    $j(selector).each(function() {
+        //console.log(this);
+        $o = $j(this);
+        var i = $o.children('i');
+        var t = $o.text();
+        $o.html(i);
+        if (!$o.attr('title')) {
+            $o.attr('title', t);
+        }
+    });
 }
