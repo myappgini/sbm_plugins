@@ -304,7 +304,7 @@ async function getUploadedFile(id) { //si viene un id es una fucnion de la TV
     data = { cmd: 'get_json', tn: thisTable(), fn: 'uploads', where: 'id=' + id, json: ["1"] };
     var a = await get_uploades_json(data);
 
-    if (!isJson(a)) {
+    if (!a || !isJson(a)) {
         a = { images: [] };
     } else {
         a = JSON.parse(a);
