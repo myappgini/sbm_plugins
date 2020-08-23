@@ -86,28 +86,33 @@ function ToggleFix(field, a = 'default') {
     }
 }
 
-function inline_fields(fields = [], label, with_cols) {
+function inline_fields(fields = [], label = false, with_cols = [], label_col = 3) { //place two or more fields of a form online
     if (fields.length > 1) {
-
-        var $pos = $j('#' + fields[0]).closest('.form-group').addClass('row');
-        var $container = $j('<div/>', {
-            class: "form-group row"
-        })
-        var $label = $j('<label/>', {
-            class: "col-2 col-form-label",
-            for: "",
-            text: label
-        })
-        $container.append($label);
+        var $container = $j('<div/>')
+        var $pos = "";
         var $input = "";
+        var i = 0;
         fields.forEach(f => {
+            if (fields.length !== with_cols.length) {
+                with_cols.push("auto");
+            }
             $cols = $j('<div/>', {
-                class: "col"
-            })
-            $input = $j('#' + f).closest('div');
-            $input.closest('label').remove();
-            $cols.append($input.html())
+                class: "col-sm-" + (with_cols[i] === "auto" ? "auto" : with_cols[i])
+            });
+            $input = $j('#' + f).closest('.form-group');
+            if (i === 0) {
+                $pos = $input;
+                var $label = $j('<label/>', {
+                    class: "col-sm-" + label_col + " col-form-label",
+                    text: (label ? label : $input.find("label").text())
+                })
+                $container.append($label);
+            }
+            $input.find('label').remove();
+            $cols.append($input.children('div[class^="col-"]').removeClass().addClass("vspacer-sm"))
+            if (i > 0) $input.remove();
             $container.append($cols);
+            i++;
         });
         $pos.html($container.html())
     } else {
@@ -257,7 +262,6 @@ function isJson(str) {
     return true;
 }
 
-
 function normalizeView() {
     $j('#top_buttons').prepend($j('#addNew'));
     var $header = $j('.page-header > h1');
@@ -269,6 +273,10 @@ function normalizeView() {
     var $div = $j('<div />', {
         class: "card-header"
     });
+
+    $j('.form-group').addClass('row'); //ad this clas to view the form inline in DV
+    $j('.control-label').addClass("col-form-label"); //ad this clas to view the form inline in DV
+
 
     $div.append($j('.page-header > h4'));
     $div.append($j('#top_buttons'));
@@ -300,6 +308,16 @@ function removeText(selector) { //from buttons
         $o.html(i);
         if (!$o.attr('title')) {
             $o.attr('title', t);
+        }
+    });
+}
+
+function labelize_table() { //labelize tables when get small screens
+    $j('div.table-responsive thead > tr > th').each(function(index, element) {
+        text = $j(this).text();
+        text = (text.length < 2 ? "" : text + ":&nbsp")
+        if (text) {
+            $j('div.table-responsive td:nth-of-type(' + (index + 1) + ')').prepend("<label class='d-lg-none'>" + text + "</label>")
         }
     });
 }
