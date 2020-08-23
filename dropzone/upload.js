@@ -115,7 +115,7 @@ async function showTumbs() {
         x = x.split('-');
         x = x[2]; //id
         var title = $j('#' + thisTable() + '-customer-' + x).text();
-        var imgTumb = $j('<div />', { id: '#imagesThumbs-' + x, class: 'thumbs', title: x });
+        var imgTumb = $j('<div />', { id: 'imagesThumbs-' + x, class: 'thumbs', title: x });
 
         $j.ajax({
             type: "POST",
@@ -140,6 +140,9 @@ async function showTumbs() {
                         setTimeout(function() {
                             object.append(imgTumb);
                             showSlides((getDefualtImage(a)), x);
+                            if (a.images.length < 2) {
+                                $j('#imagesThumbs-' + x + ' div.columns-thumbs').hide();
+                            }
                         }, 500);
                     }
                 });
