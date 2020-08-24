@@ -288,15 +288,26 @@ function normalizeView() {
 
     $j('.pagination-section').addClass('justify-content-center');
 
+    //remueve texto de los botones y los hace btn-group
     removeText('#top_buttons .btn-group .btn');
     removeText('.pagination-section .btn');
     removeText('.btn');
     removeText('#addNew');
+    $j('.btn-group-vertical').removeClass().addClass('btn-group')
 
     $j('div').removeClass('tv-tools ');
     $j('.selected_records').remove();
 
     $j('hr').remove();
+
+    //cambiar la clase de los botones de ver o de agregar en los select2
+    $j('.view_parent').removeClass('btn-default hspacer-md btn-secondary').addClass('btn-tool');
+    $j('.add_new_parent').removeClass('btn-success hspacer-md').addClass('btn-tool');
+    //cambia la clase del boton para seleccionar la fecha
+    $j('[id^="fd-but"]').removeClass('btn-default btn-block btn-secondary').addClass('btn-tool');
+
+
+
 }
 
 function removeText(selector) { //from buttons
