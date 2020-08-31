@@ -264,19 +264,18 @@ function isJson(str) {
 
 function normalizeView() {
     $j('#top_buttons').prepend($j('#addNew'));
-    var $header = $j('.page-header > h1');
 
-    $j($header).replaceWith(function() {
-        return $j("<h4 />").append($j(this).contents());
-    });
-
-    var $div = $j('<div />', {
-        class: "card-header"
-    });
+    // var $header = $j('.page-header > h1');
+    // $j($header).replaceWith(function() {
+    //     return $j("<h4 />").append($j(this).contents());
+    // });
 
     $j('.form-group').addClass('row'); //ad this clas to view the form inline in DV
     $j('.control-label').addClass("col-form-label"); //ad this clas to view the form inline in DV
 
+    var $div = $j('<div />', {
+        class: "card-header"
+    });
 
     $div.append($j('.page-header > h4'));
     $div.append($j('#top_buttons'));
