@@ -331,3 +331,87 @@ function labelize_table() { //labelize tables when get small screens
         }
     });
 }
+
+function resolve_conflict() {
+    //resuelve el conflicto entre bootstrap y prototypejs
+    //http://www.softec.lu/site/DevelopersCorner/BootstrapPrototypeConflict
+    //demo page
+    //http://jsfiddle.net/dgervalle/hhBc6/
+
+    jQuery.noConflict();
+    if (Prototype.BrowserFeatures.ElementExtensions) {
+        var disablePrototypeJS = function(method, pluginsToDisable) {
+                var handler = function(event) {
+                    event.target[method] = undefined;
+                    setTimeout(function() {
+                        delete event.target[method];
+                    }, 0);
+                };
+                pluginsToDisable.each(function(plugin) {
+                    jQuery(window).on(method + '.bs.' + plugin, handler);
+                });
+            },
+            pluginsToDisable = ['collapse', 'dropdown', 'modal', 'tooltip', 'popover', 'tab'];
+        disablePrototypeJS('show', pluginsToDisable);
+        disablePrototypeJS('hide', pluginsToDisable);
+    }
+}
+
+function addTabs(id = "new", tabs = []) {
+    tabs.unshift({
+        name: "home",
+        title: id,
+        icon: "fas fa-home",
+        fields: []
+    });
+
+    var $tab_item = [];
+    var $tab_pane = [];
+    if (tabs) {
+        tabs.forEach(e => {
+            $tab_link = $j('<a/>', {
+                class: "nav-link" + (e.name === 'home' ? ' active' : ''),
+                "data-toggle": "tab",
+                href: "#" + id + "-" + e.name,
+                text: e.title
+            }).prepend($j('<i/>', { class: "nav-tab-i " + e.icon }));
+
+            $tab_item.push($j('<li/>', { class: "nav-item" }).append($tab_link));
+            $tab_pane.push($j('<div/>', {
+                id: id + "-" + e.name,
+                class: "tab-pane fade" + (e.name === 'home' ? ' show active' : '')
+            }).append(
+                function() {
+                    var content = $j('<div/>', { class: "content-" + e.name });
+                    if (e.name === 'home') {
+                        $j('fieldset .form-group').addClass('field-home');
+                    } else if (e.fields) {
+                        e.fields.forEach(field => {
+                            $j('#' + field).closest('.form-group').removeClass('field-home').appendTo(content)
+                        })
+                    }
+                    return content;
+                }
+            ));
+        });
+    }
+
+    $tab = $j('<ul/>', {
+        class: "nav nav-tabs nav-justified",
+        role: "tablist"
+    }).append($tab_item);
+
+    $tab_content = $j("<div/>", {
+        class: "tab-content"
+    }).append($tab_pane);
+
+    var $container = $j('<div/>', {
+        id: id + "-container-tab",
+        class: "col-12"
+    }).append($tab, $tab_content);
+
+    $fieldset = $j('fieldset');
+    $fieldset.append($container);
+    $j('.field-home').appendTo(".content-home");
+
+};
