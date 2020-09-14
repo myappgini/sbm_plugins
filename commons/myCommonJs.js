@@ -1,4 +1,7 @@
 /* global $j */
+var overlayTemplateLoad = '<div class="overlay"><i class="fas fa-4x fa-sync-alt fa-spin"></i></div>';
+var overlayTemplateBaned = '<div class="overlay"><i class="fas fa-4x fa-ban"></i></div>';
+
 
 function show_error(field, campo, msg) {
     modal_window({
