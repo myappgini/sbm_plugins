@@ -63,6 +63,31 @@ function prepend_btn(field = false, title = "click me...", text = "", icon_class
     }
 }
 
+function add_action_button(b = {}, icon = "fa fa-plus") {
+    var def = {
+        class: "btn btn-default",
+        id: "",
+        name: "name buton",
+        value: "",
+        type: "submit",
+        onclick: "",
+        title: "Title Button...",
+        text: "button"
+    };
+    var $icon = $j('<i/>', { class: icon })
+
+    var set = $j.extend({}, def, b);
+    var $b = $j('<button/>', set).append($icon);
+
+    $container = $j('<div/>', {
+        class: "btn-group",
+        style: "width: 100%;"
+    }).append($b);
+    $spacer = $j('<p/>');
+    $divAction = $j('div[id$="_dv_action_buttons"] div.sticky-top').append($spacer);
+    $divAction.append($container);
+}
+
 function ToggleFix(field, a = 'default') {
 
     $field = $j('.btn-fix [data-field="' + field + '"]')
