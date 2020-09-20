@@ -116,9 +116,9 @@ function ToggleFix(field, a = 'default') {
 
 function inline_fields(fields = [], label = false, with_cols = [], label_col = 3) { //place two or more fields of a form online
     if (fields.length > 1) {
-        var $container = $j('<div/>')
-        var $pos = "";
-        var $input = "";
+        var $container = $j('<div/>', { class: "form-group row " })
+        var $index_pos = [];
+        var $label = [];
         var i = 0;
         fields.forEach(f => {
             if (fields.length !== with_cols.length) {
@@ -127,22 +127,21 @@ function inline_fields(fields = [], label = false, with_cols = [], label_col = 3
             $cols = $j('<div/>', {
                 class: "col-sm-" + (with_cols[i] === "auto" ? "auto" : with_cols[i])
             });
-            $input = $j('#' + f).closest('.form-group');
-            if (i === 0) {
-                $pos = $input;
-                var $label = $j('<label/>', {
-                    class: "col-sm-" + label_col + " col-form-label",
-                    text: (label ? label : $input.find("label").text())
-                })
-                $container.append($label);
-            }
-            $input.find('label').remove();
+            var $input = $j('#' + f).closest('.form-group');
+            $input_label = $input.find("label");
+            $index_pos.push($j('div').index($input.prev()));
+            $label.push($j('<label/>', {
+                class: "col-sm-" + label_col + " col-form-label"
+            }));
+            $label[0] = $j.extend($label[i], $input_label);
             $cols.append($input.children('div[class^="col-"]').removeClass().addClass("vspacer-sm"))
-            if (i > 0) $input.remove();
             $container.append($cols);
+            $input.remove();
             i++;
         });
-        $pos.html($container.html())
+        $label[0].text(label ? label : $label[0].text());
+        $container.prepend($label[0]);
+        $j("div:eq(" + $index_pos[0] + ")").after($container);
     } else {
         console.warn('You need an array of more than one element');
     }
