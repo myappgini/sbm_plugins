@@ -292,11 +292,6 @@ function isJson(str) {
 function normalizeView() {
     $j('#top_buttons').prepend($j('#addNew'));
 
-    // var $header = $j('.page-header > h1');
-    // $j($header).replaceWith(function() {
-    //     return $j("<h4 />").append($j(this).contents());
-    // });
-
     $j('.form-group').addClass('row'); //ad this clas to view the form inline in DV
     $j('.control-label').addClass("col-form-label"); //ad this clas to view the form inline in DV
 
@@ -332,7 +327,17 @@ function normalizeView() {
     //cambia la clase del boton para seleccionar la fecha
     $j('[id^="fd-but"]').removeClass('btn-default btn-block btn-secondary').addClass('btn-tool');
 
-
+    setTimeout(() => {
+        $expand_btn = $j('<button/>', { type: "button", class: "btn btn-tool", "data-card-widget": "maximize" }).append('<i class="fas fa-expand"></i>');
+        $tools_bar = $j('<div/>', { class: "card-tools" }) //.append($admin_btn);
+        $tools_bar.append($expand_btn);
+        $j('.card-header.panel-heading').append($tools_bar);
+        $admin_btn = $j('#admin-tools-menu-button').clone();
+        //$admin_btn.children('button').clone(); //.addClass('btn-tool').removeClass('btn-danger btn-xs');
+        $j('.page-header h1').append($admin_btn)
+            //mover el header page al card header 
+        $j('.card-header.panel-heading > h3').replaceWith($j('.page-header'));
+    }, 700);
 
 }
 
@@ -442,3 +447,37 @@ function addTabs(id = "new", tabs = []) {
     $j('.field-home').appendTo(".content-home");
 
 };
+
+
+/**
+ * Construct a selectable drop down list with registered users.
+ * @param {string} f - Field name to replace wit drop-down list.
+ * @param {string} t - table name destiny.
+ */
+function users_dropdown(f, t) {
+    var $selectField = jQuery('#' + f + '').hide();
+    $selectField.closest('div').append(jQuery('<span/>', { id: 's2_users_' + f }));
+    var val = $selectField.val();
+
+    jQuery('[id=s2_users_' + f + ']').select2({
+        width: '100%',
+        formatNoMatches: function(term) { /* */
+            return 'No matches found!';
+        },
+        minimumResultsForSearch: 5,
+        loadMorePadding: 200,
+        escapeMarkup: function(m) { /* */ return m; },
+        ajax: {
+            url: 'admin/getUsers.php',
+            dataType: 'json',
+            cache: true,
+            data: function(term, page) { /* */ return { s: term, p: page, t: t }; },
+            results: function(resp, page) { /* */ return resp; }
+        }
+    }).on('change', function(e) {
+        jQuery('[name="' + f + '"]').val(e.added.id);
+    });
+    if (val) {
+        jQuery('[id=s2_users_' + f + ']').select2('data', { text: val, id: val });
+    }
+}
