@@ -5,7 +5,7 @@ function initTable() {
 }
 
 /////////////////////////////
-//function for items salvos
+/// function for items
 ////////////////////////////
 
 function addToList(index) {
@@ -119,8 +119,8 @@ async function showTumbs() {
 
         $j.ajax({
             type: "POST",
-            url: "hooks/previewImages.php",
-            data: { cmd: 'get_json', tn: 'Order', fn: 'uploads', where: 'id=' + x, json: ["1"] },
+            url: "LAT/multipleUpload/previewImages.php",
+            data: { cmd: 'get_json', tn: thisTable(), fn: 'uploads', where: 'id=' + x, json: ["1"] },
             dataType: "json",
             success: function(a) {
                 if (!isJson(a) || !a) {
@@ -132,7 +132,7 @@ async function showTumbs() {
                 $j.ajax({
                     method: 'POST',
                     dataType: 'html',
-                    url: 'hooks/previewImages.php',
+                    url: 'LAT/multipleUpload/previewImages.php',
                     cache: 'false',
                     data: { json: a, cmd: b, indice: x, title: title, tableName: thisTable() },
                     success: function(response) {
@@ -156,7 +156,7 @@ function get_uploades_json(data = {}) {
         if (data) {
             $j.ajax({
                     type: "POST",
-                    url: "hooks/previewImages.php",
+                    url: "LAT/multipleUpload/previewImages.php",
                     data: data,
                     dataType: "json"
                 })
@@ -187,7 +187,7 @@ async function loadImages(t, indice) {
     var b = 'full';
     var j = await getUploadedFile(indice);
     data = { cmd: b, tn: thisTable(), json: j, title: t }
-    $j('#imagesThumbs').load('hooks/previewImages.php', data, function() {
+    $j('#imagesThumbs').load('LAT/multipleUpload/previewImages.php', data, function() {
         if (!is_add_new()) {
             showSlides(getDefualtImage(j));
             if (content_type() === 'print-detailview') {
@@ -321,7 +321,7 @@ async function openOtherFiles(id) {
     $j.ajax({
             method: "POST",
             dataType: "text",
-            url: 'hooks/previewImages.php',
+            url: 'LAT/multipleUpload/previewImages.php',
             data: { json: a, cmd: 'buttons', indice: id, largo: largo.length, tableName: AppGini.currentTableName }
         })
         .done(function(msg) {
@@ -486,7 +486,7 @@ async function jsonImages(data) {
     a = returnJsonstr(a);
     $j.ajax({
         type: "POST",
-        url: "hooks/previewImages.php",
+        url: "LAT/multipleUpload/previewImages.php",
         data: { cmd: 'put_json', tn: thisTable(), set: "uploads='" + a + "'", where: 'id=' + indice, json: ["1", "2"] },
         dataType: "json",
         success: function(response) {
@@ -509,7 +509,7 @@ async function openGalery(btn) {
     $j.ajax({
             method: "POST",
             dataType: "text",
-            url: 'hooks/previewImages.php',
+            url: 'LAT/multipleUpload/previewImages.php',
             data: { json: a, cmd: 'form', tableName: thisTable(), indice: indice }
         })
         .done(function(msg) {
@@ -527,7 +527,7 @@ function save_button(data, id) {
 
     $j.ajax({
         type: "POST",
-        url: "hooks/previewImages.php",
+        url: "LAT/multipleUpload/previewImages.php",
         data: { cmd: 'put_json', tn: thisTable(), set: "uploads='" + jsn + "'", where: 'id=' + id, json: ["1", "2"] },
         dataType: "json",
         success: function(response) {
