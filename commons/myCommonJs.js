@@ -114,18 +114,29 @@ function ToggleFix(field, a = 'default') {
     }
 }
 
-function inline_fields(fields = [], label = false, with_cols = [], label_col = 3) { //place two or more fields of a form online
+/**
+ * Display an array of fields inline fileds.
+ * ex: inline_fields(['field1', 'field2'],'fields 1&2');
+ * 
+ * @param {array} fields - Array Fields to inline view.
+ * @param {string} label - Label, if note set get the first label of fields.
+ * @param {array} width_cols - Array with width cols, use css bootstrap number for this option, default is the same width.
+ * @param {integer} label_col - label width default 3.
+ * 
+ * 
+ */
+function inline_fields(fields = [], label = false, width_cols = [], label_col = 3) { //place two or more fields of a form online
     if (fields.length > 1) {
         var $container = $j('<div/>', { class: "form-group row " })
         var $index_pos = [];
         var $label = [];
         var i = 0;
         fields.forEach(f => {
-            if (fields.length !== with_cols.length) {
-                with_cols.push("auto");
+            if (fields.length !== width_cols.length) {
+                width_cols.push("auto");
             }
             $cols = $j('<div/>', {
-                class: "col-sm-" + (with_cols[i] === "auto" ? "auto" : with_cols[i])
+                class: "col-sm-" + (width_cols[i] === "auto" ? "auto" : width_cols[i])
             });
             var $input = $j('#' + f).closest('.form-group');
             $input_label = $input.find("label");
@@ -133,7 +144,9 @@ function inline_fields(fields = [], label = false, with_cols = [], label_col = 3
             $label.push($j('<label/>', {
                 class: "col-sm-" + label_col + " col-form-label"
             }));
-            $label[0] = $j.extend($label[i], $input_label);
+            //se extienden las classes de todos los label al label0, appgini utiliza _view_parent label para llamar al parent
+            //$label[0] = $j.extend($label[i], $input_label);
+            $label[0].data($input_label.data());
             $cols.append($input.children('div[class^="col-"]').removeClass().addClass("vspacer-sm"))
             $container.append($cols);
             $input.remove();
